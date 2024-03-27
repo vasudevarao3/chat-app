@@ -1,10 +1,14 @@
-const express = require("express");
-const cors = require("cors");
-const {default: axios} = require("axios");
+import express, { json } from "express";
+import cors from "cors";
+import { default as axios } from "axios";
+import path from 'path'
 
 const app = express();
-app.use(express.json());
+
+app.use(json());
 app.use(cors({ origin: true }));
+
+const __dirname = path.resolve();
 
 app.post("/authenticate", async (req, res) => {
   const { username } = req.body;
@@ -22,4 +26,10 @@ app.post("/authenticate", async (req, res) => {
   }
 });
 
-app.listen(3001);
+app.use(express.static(path.join(__dirname, '/vite-project/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'vite-project', 'dist', 'index.html'));
+});
+
+app.listen(3001); 
